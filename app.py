@@ -3,7 +3,6 @@ from backend import *
 
 input_loops = {
     'Aset':{
-        'info':"""Pada bagian ini kita akan menentukan berapa aset yang dimiliki.""",
         'kategori':{
             'aset_lancar':{
                 'Aset Kas':{
@@ -21,6 +20,24 @@ input_loops = {
                 'Saham':0,
                 'Nilai Tunai Polis':0,
                 'Lain-Lain':0
+                }
+            },
+            'aset_tidak_lancar':{
+                'Aset Konsumsi':{
+                    'Harga Rumah dihuni':0,
+                    'Perhiasan':0,
+                    'Mobil':0,
+                    'Motor':0
+
+                },
+                'Aset Investasi':{
+                    'BPJS Ketenagakerjaan / JHT':0,
+                    'Dana Pensiun':0,
+                    'Koleksi':0,
+                    'Properti':0,
+                    'Tanah Kavling':0,
+                    'Nilai Bersih Usaha':0
+
                 }
             }
         }
@@ -53,8 +70,6 @@ with st.sidebar:
     st.subheader("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini.")
 
 with tab1:
-    st.write(st.session_state.data['Aset']['info'])
-
     with st.expander("Aset Lancar"):
         col1,col2 = st.columns(2)
         with col1:
@@ -68,4 +83,19 @@ with tab1:
             for komponen in st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi']:
                 output = st.number_input(komponen,0,key=komponen,format='%g')
                 st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi'][komponen] = output
+    
+    with st.expander("Aset Tidak Lancar"):
+        col1,col2 = st.columns(2)
+        
+        with col1:
+            for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi']:
+                output = st.number_input(komponen,0,key=komponen,format='%g')
+                st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'][komponen] = output
+            st.subheader("Total Aset Konsumsi: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'])))                
 
+        with col2:
+            for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi']:
+                output = st.number_input(komponen,0,key=komponen,format='%g')
+                st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'][komponen] = output
+            st.subheader("Total Aset: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'])))                
+   
