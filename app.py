@@ -9,7 +9,8 @@ input_loops = {
                 'Kas di tangan':0,
                 'Tabungan':0,
                 'Deposito':0,
-                'Reksadana Pasar Uang':0
+                'Reksadana Pasar Uang':0,
+                'Total Aset Kas':0
                 },
                 'Aset Investasi':{
                 'Emas Logam Mulia':0,
@@ -19,7 +20,8 @@ input_loops = {
                 'Obligasi':0,
                 'Saham':0,
                 'Nilai Tunai Polis':0,
-                'Lain-Lain':0
+                'Lain-Lain':0,
+                'Total Aset Investasi':0
                 }
             },
             'aset_tidak_lancar':{
@@ -73,29 +75,29 @@ with tab1:
     with st.expander("Aset Lancar"):
         col1,col2 = st.columns(2)
         with col1:
+            st.subheader("Total Aset Kas: {:,}".format(get_total_aset_kas()))     
             for komponen in st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Kas']:
-                output = st.number_input(komponen,0,key=komponen,format='%g')
+                output = st.number_input(komponen,0,key=komponen,format='%g',on_change=get_total_aset_kas)
                 st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Kas'][komponen] = output
-            st.subheader("Total Aset Kas: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Kas'])))                
+           
         
-        with col2:
-            st.subheader("Total Aset Investasi: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi'])))
-            for komponen in st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi']:
-                output = st.number_input(komponen,0,key=komponen,format='%g')
-                st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi'][komponen] = output
+        # with col2:
+        #     st.subheader("Total Aset Investasi: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi'])))
+        #     for komponen in st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi']:
+        #         output = st.number_input(komponen,0,key=komponen,format='%g',on_change=get_total(st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi']))
+        #         st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi'][komponen] = output
     
-    with st.expander("Aset Tidak Lancar"):
-        col1,col2 = st.columns(2)
+    # with st.expander("Aset Tidak Lancar"):
+    #     col1,col2 = st.columns(2)
         
-        with col1:
-            for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi']:
-                output = st.number_input(komponen,0,key=komponen,format='%g')
-                st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'][komponen] = output
-            st.subheader("Total Aset Konsumsi: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'])))                
+    #     with col1:
+    #         for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi']:
+    #             output = st.number_input(komponen,0,key=komponen,format='%g')
+    #             st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'][komponen] = output
+    #         st.subheader("Total Aset Konsumsi: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'])))                
 
-        with col2:
-            for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi']:
-                output = st.number_input(komponen,0,key=komponen,format='%g')
-                st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'][komponen] = output
-            st.subheader("Total Aset: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'])))                
-   
+    #     with col2:
+    #         for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi']:
+    #             output = st.number_input(komponen,0,key=komponen,format='%g')
+    #             st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'][komponen] = output
+    #         st.subheader("Total Aset: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'])))                
