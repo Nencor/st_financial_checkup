@@ -1,69 +1,17 @@
 import streamlit as st 
 from backend import *
 
-input_loops = {
-    'Aset':{
-        'kategori':{
-            'aset_lancar':{
-                'Aset Kas':{
-                'Kas di tangan':0,
-                'Tabungan':0,
-                'Deposito':0,
-                'Reksadana Pasar Uang':0,
-                'Total Aset Kas':0
-                },
-                'Aset Investasi':{
-                'Emas Logam Mulia':0,
-                'Reksadana Pendapatan Tetap':0,
-                'Reksadana Campuran':0,
-                'Reksadana Saham':0,
-                'Obligasi':0,
-                'Saham':0,
-                'Nilai Tunai Polis':0,
-                'Lain-Lain':0,
-                'Total Aset Investasi':0
-                }
-            },
-            'aset_tidak_lancar':{
-                'Aset Konsumsi':{
-                    'Harga Rumah dihuni':0,
-                    'Perhiasan':0,
-                    'Mobil':0,
-                    'Motor':0
-
-                },
-                'Aset Investasi':{
-                    'BPJS Ketenagakerjaan / JHT':0,
-                    'Dana Pensiun':0,
-                    'Koleksi':0,
-                    'Properti':0,
-                    'Tanah Kavling':0,
-                    'Nilai Bersih Usaha':0
-
-                }
-            }
-        }
-
-    },
-    'Kewajiban':{
-
-    },
-    'Pendapatan':{
-
-    },
-    'Pengeluaran':{
-        
-    },
-
-    'Lihat Hasil':{
-
-    }
-}
-if 'data' not in st.session_state:
-    st.session_state['data'] = input_loops
 
 
-tab1,tab2,tab3,tab4,tab5 = st.tabs(list(input_loops))
+def number_input (labelnya,keynya,helpnya=''):
+    st.number_input(label=labelnya
+        ,value=default_min_value,min_value=default_min_value
+        ,on_change=callback_input
+        ,key=keynya
+        ,help=helpnya
+    )
+tab1,tab2 = st.tabs(['Aset','Kewajiban'])
+default_min_value = 0
 
 
 with st.sidebar:
@@ -74,30 +22,37 @@ with st.sidebar:
 with tab1:
     with st.expander("Aset Lancar"):
         col1,col2 = st.columns(2)
-        with col1:
-            st.subheader("Total Aset Kas: {:,}".format(get_total_aset_kas()))     
-            for komponen in st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Kas']:
-                output = st.number_input(komponen,0,key=komponen,format='%g',on_change=get_total_aset_kas)
-                st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Kas'][komponen] = output
-           
-        
-        # with col2:
-        #     st.subheader("Total Aset Investasi: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi'])))
-        #     for komponen in st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi']:
-        #         output = st.number_input(komponen,0,key=komponen,format='%g',on_change=get_total(st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi']))
-        #         st.session_state.data['Aset']['kategori']['aset_lancar']['Aset Investasi'][komponen] = output
-    
-    # with st.expander("Aset Tidak Lancar"):
-    #     col1,col2 = st.columns(2)
-        
-    #     with col1:
-    #         for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi']:
-    #             output = st.number_input(komponen,0,key=komponen,format='%g')
-    #             st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'][komponen] = output
-    #         st.subheader("Total Aset Konsumsi: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Konsumsi'])))                
+        with col1:   
+            st.subheader("Aset Kas")
+            number_input('Kas di Tangan','aset_lancar__kas_di_tangan')
+            number_input('Tabungan','aset_lancar__tabungan')
+            number_input('Deposito','aset_lancar__deposito')
+            number_input('Reksadana Pasar Uang','aset_lancar__rdpu')            
+        with col2:        
+            st.subheader("Aset Investasi")
+            number_input('Emas Logam Mulia','aset_lancar__emas')                       
+            number_input('Reksadana Pendapatan Tetap','aset_lancar__rdpt')
+            number_input('Reksadana Campuran','aset_lancar__rdc')  
+            number_input('Reksadana Saham','aset_lancar__rds')                    
+            number_input('Obligasi','aset_lancar__obligasi')
+            number_input('Saham','aset_lancar__saham')
+            number_input('Nilai Tunai Polis','aset_lancar__polis')
+            number_input('Lain-lain','aset_lancar__others')
 
-    #     with col2:
-    #         for komponen in st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi']:
-    #             output = st.number_input(komponen,0,key=komponen,format='%g')
-    #             st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'][komponen] = output
-    #         st.subheader("Total Aset: {:,}".format(get_total(st.session_state.data['Aset']['kategori']['aset_tidak_lancar']['Aset Investasi'])))                
+    with st.expander("Aset Tidak Lancar"):
+        col1,col2 = st.columns(2)
+        with col1:
+            st.subheader("Aset Konsumsi")
+            number_input("Harga rumah (milik) dihuni",'aset_tidak_lancar__rumah')
+            number_input("Harga perhiasan",'aset_tidak_lancar__perhiasan')
+            number_input("Harga mobil",'aset_tidak_lancar__mobil')
+            number_input("Harga motor",'aset_tidak_lancar__motor')            
+        with col2:
+            st.subheader("Aset Investasi")
+            number_input("BPJS Ketenagakerjaan",'aset_tidak_lancar__bpjs_naker')
+            number_input("Dana Pensiun",'aset_tidak_lancar__pensiun')
+            number_input("Barang koleksi",'aset_tidak_lancar__koleksi')
+            number_input("Properti","aset_tidak_lancar__properti")
+            number_input("Tanah","aset_tidak_lancar__tanah")
+            number_input("Nilai Bersih Usaha","aset_tidak_lancar__bisnis")
+            print("Hello world")
