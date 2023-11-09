@@ -6,10 +6,12 @@ initialize(session_states=['total_pemasukan'
                            ,'total_cicilan'
                            ,'total_subs'
                            ,'total_living_cost'
-                           ,'ideal_debt_to_income_ratio'
+                           ,'target_rasio_utang_pemasukan'
                            ,'cek_pemasukan_pengeluaran'
                            ,'val_pemasukan'
                            ,'val_pengeluaran'
+                           ,'total_saving'
+                           ,'target_rasio_tabungan_pemasukanras'                           
                            ])
 
 def number_input (labelnya,keynya,helpnya='',default_min_value=0):
@@ -20,19 +22,27 @@ def number_input (labelnya,keynya,helpnya='',default_min_value=0):
                              ,key=keynya
                              ,help=helpnya
                              ,step=1000000)
+def slider_input(labelnya,keynya,helpnya='',valuenya=50,default_min_value=0,default_max_value=100):
+    st.slider(label=labelnya
+              ,key=keynya
+              ,help=helpnya
+              ,min_value=default_min_value
+              ,max_value=default_max_value
+              ,value=valuenya
+              ,on_change=get_total
+              )
     
 
     
-tab1,tab2,tab3,tab4 = st.tabs(['Pemasukan','Pengeluaran','Financial Checkup','Debug'])
+tab1,tab2,tab3,tab4,tab5 = st.tabs(['Pemasukan','Pengeluaran','Financial Checkup','Debug','Credit'])
 
 
 with st.sidebar:
     st.title("Tikidata Analytics Financial Checkup")
-    st.slider("Debt to Income Ratio(%)",min_value=0,max_value=100,format="%g",value=30,key='rasio_dir',on_change=get_total)
-    st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
-    st.write("Follow our [Linkedin Pages](https://www.linkedin.com/company/tikidata-analytics) for more freebies.")
-    st.write("This project is in collaboration with [Asuransimurni.com](https://asuransimurni.com)")
-    st.write("Any comments and feedbacks are welcome in [Twitter](https://twitter.com/asmurcom).")
+    slider_input("Target rasio utang terhadap pemasukan (%)",'rasio_dir',valuenya=30)
+    slider_input("Target rasio tabungan terhadap pemasukan (%)",'rasio_tabungan_pemasukan',valuenya=50)
+    # slider_input("Target Emergency Fund (bulan)",keynya='dana_darurat',default_min_value=3,default_max_value=12,valuenya=6)
+
 
 
 
@@ -62,14 +72,23 @@ with tab2:
         number_input("Bakti untuk orang tua",keynya='bakti_ortu',helpnya='Jumlah uang yang kamu berikan untuk orang tua setiap bulannya')
         number_input("Uang Makan",keynya='uang_makan')
         number_input("Transport Bulanan",keynya='transport')
-        number_input("Asuransi",keynya='asuransi',helpnya="Budget pembayaran premi asuransi tiap bulannya")
+        number_input("Premi Asuransi",keynya='asuransi',helpnya="Budget pembayaran premi asuransi tiap bulannya. Jika pembayaran tahunan maka diinput prorata per bulan.")
         number_input("Parkiran Kendaraan",keynya='parkiran',helpnya='Jumlah budget Parkiran baik di kantor / rumah / apartemen yang ditanggung pribadi')
     with col2:
+        st.subheader("Total Saving: {:,}".format(st.session_state.total_saving))
+        number_input("Kas di tangan",keynya='rekening_tangan',helpnya='Uang tunai yang dimiliki secara tunai')
+        number_input("Rekening tabungan",keynya='rekening_tabungan',helpnya='Total uang di seluruh rekening tabungan')
+        number_input("Reksadana Pasar Uang",keynya='rdpu')
+        number_input("Reksadana Pendapatan Tetap",keynya='rdpt')
+        number_input("Reksadana Saham",keynya='rds')
+        number_input("Reksadana Obligasi",keynya='rd_obligasi')
+
         st.subheader("Total Cicilan: {:,}".format(st.session_state.total_cicilan))
         number_input("Cicilan rumah/apartemen/",keynya='cicilan_rumah',helpnya='Total cicilan seluruh rumah/apartemen per bulan')
         number_input("Cicilan motor",keynya='cicilan_motor',helpnya="Total cicilan seluruh motor per bulan")
         number_input("Cicilan mobil",keynya='cicilan_mobil',helpnya='Total cicilan seluruh mobil per bulan')
         number_input("Cicilan Kartu Kredit",keynya='cicilan_cc',helpnya='Total cicilan seluruh Kartu Kredit per bulan')
+    
         st.subheader("Total Subscription: {:,}".format(st.session_state.total_subs))
         number_input("Streaming Spotify",keynya='subs_spotify')
         number_input("Streaming Netflix",keynya='subs_netflix')
@@ -85,8 +104,17 @@ with tab3:
     with st.expander("Cek Cashflow"):
         cek_pemasukan_pengeluaran()
 
-    with st.expander("Cek Debt to Income Ratio"):
-     cek_debt_income_ratio()
+    with st.expander("Cek rasio utang terhadap pemasukan"):
+        cek_rasio_utang_pemasukan()
+
+    with st.expander("Cek rasio tabungan terhadap pemasukan"):
+        cek_rasio_tabungan_pemasukan()
 with tab4:
     st.json(st.session_state)
     # st.write(type(st.session_state))
+with tab5:
+    st.write("Kudos to the following friends and colleague for their contributions in this project. ")
+    st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
+    st.write("Follow our [Linkedin Pages](https://www.linkedin.com/company/tikidata-analytics) for more freebies.")
+    st.write("This project is in collaboration with [Asuransimurni.com](https://asuransimurni.com)")
+    st.write("Any comments and feedbacks are welcome in [Twitter](https://twitter.com/asmurcom).")
