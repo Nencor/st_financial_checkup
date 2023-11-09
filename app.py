@@ -26,8 +26,11 @@ with st.sidebar:
     st.title("Tikidata Analytics Financial Checkup")
     st.slider("Debt to Income Ratio(%)",min_value=0,max_value=100,format="%g",value=30,key='rasio_dir')
     st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
-    st.write("Follow our Linkedin Pages for more freebies.")
-    st.write("In collaboration with Asuransimurni.com")
+    st.write("Follow our [Linkedin Pages](https://www.linkedin.com/company/tikidata-analytics) for more freebies.")
+    st.write("This project is in collaboration with [Asuransimurni.com](https://asuransimurni.com)")
+    st.write("Any comments and feedbacks are welcome in [Twitter](https://twitter.com/asmurcom).")
+
+
 
 with tab1:
         st.subheader("Total Pemasukan: {:,}".format(st.session_state.total_pemasukan))
@@ -71,4 +74,4 @@ with tab3:
      print("")
 with tab4:
     st.json(st.session_state)
-    st.write(type(st.session_state))
+    # st.write(type(st.session_state))
