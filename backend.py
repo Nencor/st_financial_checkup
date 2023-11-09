@@ -7,6 +7,9 @@ def initialize(session_states):
         if session_state not in st.session_state:
             st.session_state[session_state]=0
 
+def default_warning(text="Masukkan pemasukan dan pengeluaran kamu terlebih dahulu."):
+    st.warning(text)
+
 def get_total():
     st.session_state['ideal_debt_to_income_ratio'] = (st.session_state.total_pemasukan * st.session_state.rasio_dir)/100
 
@@ -47,3 +50,33 @@ def get_total():
                                             + st.session_state.total_living_cost
                                             )
     
+    st.session_state['total_pemasukan_pengeluaran'] = (st.session_state.total_pengeluaran
+                                                       + st.session_state.total_pemasukan
+                                                       )
+    st.session_state['val_pemasukan'] = st.session_state.total_pemasukan<=0
+    st.session_state['val_pengeluaran'] = st.session_state.total_pengeluaran<=0
+    
+def cek_pemasukan_pengeluaran():
+    if st.session_state.total_pemasukan>st.session_state.total_pengeluaran:
+        st.success("Good job! Pemasukan kamu masih lebih tinggi daripada pengeluaran.")
+    elif st.session_state.total_pemasukan<st.session_state.total_pengeluaran:
+        st.error("Waduh! Pengeluaran kamu melebihi pemasukan. Berikut saran yang dapat kamu lakukan")
+        st.write("* Kamu membutuhkan pemasukan tambahan untuk mengimbangi pengeluaran yang terlampau besar.")
+        st.write("* Kamu dapat meminimalisir pengeluaran yang tidak perlu.")
+    else:
+        default_warning()
+    return st.session_state.cek_pemasukan_pengeluaran
+
+def cek_debt_income_ratio():        
+    if st.session_state.total_pemasukan<=0:
+        default_warning("Masukkan pemasukan dan cicilan kamu terlebih dahulu") 
+    elif st.session_state.total_cicilan>st.session_state.ideal_debt_to_income_ratio:
+        st.error("Waduh! Cicilan kamu lebih besar dari maksimal rasio cicilan yang diijinkan {} atau setara dengan {}".format(st.session_state.rasio_dir
+                                                                                                                              , st.session_state.ideal_debt_to_income_ratio
+                                                                                                                              ))
+    else:
+        st.success("Good job! Cicilan kamu {:,} masih dalam target rasio yang direncanakan {}% atau maksimal cicilan sebesar {:,} dari total pemasukan {:,}.".format(
+                                                                                                                                    st.session_state.total_cicilan
+                                                                                                                                    , st.session_state.rasio_dir
+                                                                                                                                    , int(st.session_state.ideal_debt_to_income_ratio)
+                                                                                                                                    , int(st.session_state.total_pemasukan)))

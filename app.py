@@ -6,7 +6,11 @@ initialize(session_states=['total_pemasukan'
                            ,'total_cicilan'
                            ,'total_subs'
                            ,'total_living_cost'
-                           ,'ideal_debt_to_income_ratio'])
+                           ,'ideal_debt_to_income_ratio'
+                           ,'cek_pemasukan_pengeluaran'
+                           ,'val_pemasukan'
+                           ,'val_pengeluaran'
+                           ])
 
 def number_input (labelnya,keynya,helpnya='',default_min_value=0):
     keynya = st.number_input(label=labelnya
@@ -19,12 +23,12 @@ def number_input (labelnya,keynya,helpnya='',default_min_value=0):
     
 
     
-tab1,tab2,tab3,tab4 = st.tabs(['Pemasukan','Pengeluaran','Financial Review','Debug'])
+tab1,tab2,tab3,tab4 = st.tabs(['Pemasukan','Pengeluaran','Financial Checkup','Debug'])
 
 
 with st.sidebar:
     st.title("Tikidata Analytics Financial Checkup")
-    st.slider("Debt to Income Ratio(%)",min_value=0,max_value=100,format="%g",value=30,key='rasio_dir')
+    st.slider("Debt to Income Ratio(%)",min_value=0,max_value=100,format="%g",value=30,key='rasio_dir',on_change=get_total)
     st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
     st.write("Follow our [Linkedin Pages](https://www.linkedin.com/company/tikidata-analytics) for more freebies.")
     st.write("This project is in collaboration with [Asuransimurni.com](https://asuransimurni.com)")
@@ -39,6 +43,9 @@ with tab1:
         number_input("Sampingan",keynya='sampingan',helpnya='Rata-rata / minimum pemasukan sampingan seperti ngajar les, ngeband, GoCar, komisi asuransi,komisi properti setiap bulannya')
         number_input("Uang jajan dari papa",keynya='uang_papa',helpnya='Rata-rata / minimum pemasukan dari investor kandung setiap bulan')
         number_input("Deposito",keynya='deposito',helpnya="Bila memiliki Investasi Deposito yang masuk ke rekening setiap bulan.")
+
+        with st.expander("FAQ"):
+             st.write("FAQ bakal diupdate disini")
 
 with tab2:
     st.header("Total Pengeluaran: {:,}".format(st.session_state.total_pengeluaran))
@@ -69,9 +76,17 @@ with tab2:
         number_input('Subscription ChatGPT',keynya='subs_chatgpt')
         number_input("Subscription/Streaming lainnya",keynya='subs_others')
         number_input("Gym/Zumba/Poundfit/Yoga Subscription",keynya='gym')
+
+    with st.expander("FAQ"):
+        st.write("FAQ bakal diupdate disini")
         
 with tab3:
-     print("")
+    st.write("Di bawah ini beberapa feedback yang dapat dipertimbangkan:")
+    with st.expander("Cek Cashflow"):
+        cek_pemasukan_pengeluaran()
+
+    with st.expander("Cek Debt to Income Ratio"):
+     cek_debt_income_ratio()
 with tab4:
     st.json(st.session_state)
     # st.write(type(st.session_state))
