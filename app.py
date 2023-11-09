@@ -1,109 +1,74 @@
 import streamlit as st 
 from backend import *
 
-
-initialize_totalan(state_names=['total_aset_kas']) #set the st.session_state.total_aset_kas = 0
+initialize(session_states=['total_pemasukan'
+                           ,'total_pengeluaran'
+                           ,'total_cicilan'
+                           ,'total_subs'
+                           ,'total_living_cost'
+                           ,'ideal_debt_to_income_ratio'])
 
 def number_input (labelnya,keynya,helpnya='',default_min_value=0):
-    
-    st.session_state.keynya = st.number_input(label=labelnya
+    keynya = st.number_input(label=labelnya
                              ,value=default_min_value
                              ,min_value=default_min_value
-                             ,on_change=callback_input
+                             ,on_change=get_total
                              ,key=keynya
-                             ,help=helpnya)
+                             ,help=helpnya
+                             ,step=1000000)
     
 
     
-tab1,tab2,tab3,tab4,tab5 = st.tabs(['Aset','Kewajiban','Pendapatan','Pengeluaran','Debug'])
-default_min_value = 0
+tab1,tab2,tab3,tab4 = st.tabs(['Pemasukan','Pengeluaran','Financial Review','Debug'])
 
 
 with st.sidebar:
     st.title("Tikidata Analytics Financial Checkup")
-    st.slider("Allowed Debt to Income Ratio(%)",min_value=0,max_value=100,format="%g",value=30)
-    st.subheader("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini.")
+    st.slider("Debt to Income Ratio(%)",min_value=0,max_value=100,format="%g",value=30,key='rasio_dir')
+    st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
+    st.write("Follow our Linkedin Pages for more freebies.")
+    st.write("In collaboration with Asuransimurni.com")
 
 with tab1:
-    with st.expander("Aset Lancar"):
-        col1,col2 = st.columns(2)
-        with col1:   
-            st.subheader("Aset Kas")
-            number_input('Kas di Tangan','aset_lancar__kas_di_tangan')
-            number_input('Tabungan','aset_lancar__tabungan')
-            number_input('Deposito','aset_lancar__deposito')
-            number_input('Reksadana Pasar Uang','aset_lancar__rdpu')
-            # st.subheader("Total Aset Kas: {}".format(st.session_state.total_aset_kas)) #uncomment this to see the error
-        with col2:        
-            st.subheader("Aset Investasi")
-            number_input('Emas Logam Mulia','aset_lancar__emas')                       
-            number_input('Reksadana Pendapatan Tetap','aset_lancar__rdpt')
-            number_input('Reksadana Campuran','aset_lancar__rdc')  
-            number_input('Reksadana Saham','aset_lancar__rds')                    
-            number_input('Obligasi','aset_lancar__obligasi')
-            number_input('Saham','aset_lancar__saham')
-            number_input('Nilai Tunai Polis','aset_lancar__polis')
-            number_input('Lain-lain','aset_lancar__others')
+        st.subheader("Total Pemasukan: {:,}".format(st.session_state.total_pemasukan))
+        number_input("Gaji",keynya='gaji',helpnya="Gaji yang diterima setiap bulan include THR dan bonus prorata per bulan")
+        number_input("Hasil usaha",keynya='hasil_usaha',helpnya="Rata-rata/minimum hasil usaha yang diterima setiap bulan")
+        number_input("Sampingan",keynya='sampingan',helpnya='Rata-rata / minimum pemasukan sampingan seperti ngajar les, ngeband, GoCar, komisi asuransi,komisi properti setiap bulannya')
+        number_input("Uang jajan dari papa",keynya='uang_papa',helpnya='Rata-rata / minimum pemasukan dari investor kandung setiap bulan')
+        number_input("Deposito",keynya='deposito',helpnya="Bila memiliki Investasi Deposito yang masuk ke rekening setiap bulan.")
 
-    with st.expander("Aset Tidak Lancar"):
-        col1,col2 = st.columns(2)
-        with col1:
-            st.subheader("Aset Konsumsi")
-            number_input("Harga rumah (milik) dihuni",'aset_tidak_lancar__rumah')
-            number_input("Harga perhiasan",'aset_tidak_lancar__perhiasan')
-            number_input("Harga mobil",'aset_tidak_lancar__mobil')
-            number_input("Harga motor",'aset_tidak_lancar__motor')            
-        with col2:
-            st.subheader("Aset Investasi")
-            number_input("BPJS Ketenagakerjaan",'aset_tidak_lancar__bpjs_naker')
-            number_input("Dana Pensiun",'aset_tidak_lancar__pensiun')
-            number_input("Barang koleksi",'aset_tidak_lancar__koleksi')
-            number_input("Properti","aset_tidak_lancar__properti")
-            number_input("Tanah","aset_tidak_lancar__tanah")
-            number_input("Nilai Bersih Usaha","aset_tidak_lancar__bisnis")
 with tab2:
+    st.header("Total Pengeluaran: {:,}".format(st.session_state.total_pengeluaran))
     col1,col2 = st.columns(2)
     with col1:
-        st.subheader("Jangka Pendek")
-        number_input("Kartu Kredit",'kewajiban_jangka_pendek__kartu_kredit')
-        number_input("Pinjaman Pribadi",'kewajiban_jangka_pendek__pinjaman_pribadi')    
-        number_input("Pinjaman Mobil",'kewajiban_jangka_pendek__pinjaman_mobil')
-        number_input("Pinjaman KTA (Kredit Tanpa Agunan)",'kewajiban_jangka_pendek__kta')                          
-        number_input("Lainnya",'kewajiban_jangka_pendek__lainnya')        
+        st.subheader("Living Cost: {:,}".format(st.session_state.total_living_cost))
+        number_input('Sewa Kos / Apartemen',keynya='kos_apartemen',helpnya='Biaya sewa kos/apartemen per bulan')
+        number_input("Biaya Iuran Pemeliharaan Lingkungan (IPL)",keynya='ipl',helpnya='Biaya Iuran Pemeliharaan Lingkungan setiap bulannya')
+        number_input("Biaya listrik",keynya='pln',helpnya="Listrik prabayar / paskabayar tiap bulan (AVG)")
+        number_input("Biaya internet WIFI",keynya='internet_wifi',helpnya='Paket data internet wifi')
+        number_input("Biaya PDAM",keynya='pdam',helpnya='Tulis 0 kalo kamu pake air sumur / air sungai')
+        number_input("Paket data Smartphone",keynya='paket_data',helpnya='Harga paket data per bulan')
+        number_input("Sedekah/Infaq/Perpuluhan/Kemanusiaan",keynya='kemanusiaan',helpnya="Budget untnuk sedekah/infaq/perpuluhan/kemanusiaan lainnya")
+        number_input("Bakti untuk orang tua",keynya='bakti_ortu',helpnya='Jumlah uang yang kamu berikan untuk orang tua setiap bulannya')
+        number_input("Uang Makan",keynya='uang_makan')
+        number_input("Transport Bulanan",keynya='transport')
+        number_input("Asuransi",keynya='asuransi',helpnya="Budget pembayaran premi asuransi tiap bulannya")
+        number_input("Parkiran Kendaraan",keynya='parkiran',helpnya='Jumlah budget Parkiran baik di kantor / rumah / apartemen yang ditanggung pribadi')
     with col2:
-        st.subheader("Jangka Panjang")
-        number_input("Pinjaman Rumah",'kewajiban_jangka_panjang__pinjaman_rumah')
-        number_input("Pinjaman Apartemen",'kewajiban_jangka_panjang__pinjaman_apartement')        
-        number_input("Pinjaman dari Perusahaan",'kewajiban_jangka_panjang__pinjaman_perusahaan')        
-        number_input("Pinjaman lainnya",'kewajiban_jangka_panjang__kartu_kredit')        
-
+        st.subheader("Total Cicilan: {:,}".format(st.session_state.total_cicilan))
+        number_input("Cicilan rumah/apartemen/",keynya='cicilan_rumah',helpnya='Total cicilan seluruh rumah/apartemen per bulan')
+        number_input("Cicilan motor",keynya='cicilan_motor',helpnya="Total cicilan seluruh motor per bulan")
+        number_input("Cicilan mobil",keynya='cicilan_mobil',helpnya='Total cicilan seluruh mobil per bulan')
+        number_input("Cicilan Kartu Kredit",keynya='cicilan_cc',helpnya='Total cicilan seluruh Kartu Kredit per bulan')
+        st.subheader("Total Subscription: {:,}".format(st.session_state.total_subs))
+        number_input("Streaming Spotify",keynya='subs_spotify')
+        number_input("Streaming Netflix",keynya='subs_netflix')
+        number_input('Subscription ChatGPT',keynya='subs_chatgpt')
+        number_input("Subscription/Streaming lainnya",keynya='subs_others')
+        number_input("Gym/Zumba/Poundfit/Yoga Subscription",keynya='gym')
+        
 with tab3:
-    st.subheader("Pendapatan rutin per bulan")
-    number_input("Gaji",'pendapatan_rutin__gaji')
-    number_input("Bagi hasil bisnis",'pendapatan_rutin__bagi_hasil_bisnis')        
-    number_input("Pendapatan Sewa",'pendapatan_rutin__pendapatan_sewa')
-    number_input("Pendapatan Lain-lain",'pendapatan_rutin__lain_lain')     
-
+     print("")
 with tab4:
-    st.subheader("Pengeluaran rutin per bulan")
-    col1,col2,col3 = st.columns(3)
-    with col1:
-        number_input("Gaji",'pengeluaran_rutin__tabungan_investasi')
-        number_input("Zakat/Perpuluhan/Sedekah",'pengeluaran_rutin__zakat_perpuluhan_sedekah')
-        number_input("Premi Asuransi",'pengeluaran_rutin__asuransi')    
-        number_input("Listrik",'pengeluaran_rutin__tabungan_listrik')    
-        number_input("Air / PDAM",'pengeluaran_rutin__tabungan_air')
-    with col2:
-        number_input("Pulsa / Paket Data Smartphone",'pengeluaran_rutin__telepon')
-        number_input("Internet",'pengeluaran_rutin__internet')
-        number_input("Belanja bulanan / dapur",'pengeluaran_rutin__belanja_dapur')
-        number_input("Transportasi",'pengeluaran_rutin__transportasi')    
-        number_input("Kesehatan",'pengeluaran_rutin__kesehatan')    
-    with col3:
-        number_input("Pendidikan",'pengeluaran_rutin__pendidikan')    
-        number_input("Belanja Pribadi",'pengeluaran_rutin__belanja_pribadi')    
-        number_input("Pengeluaran Anak",'pengeluaran_rutin__pengeluaran_anak')
-        number_input("Cicilan utang",'pengeluaran_rutin__cicilan_utang')
-        number_input("Gaya Hidup",'pengeluaran_rutin__gaya')      
-with tab5:
-    st.write(st.session_state)
+    st.json(st.session_state)
+    st.write(type(st.session_state))
