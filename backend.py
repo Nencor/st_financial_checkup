@@ -10,10 +10,8 @@ def initialize(session_states):
 def default_warning(text="Masukkan pemasukan dan pengeluaran kamu terlebih dahulu."):
     st.warning(text)
 
-def get_total():
-    st.session_state['target_rasio_utang_pemasukan'] = int(st.session_state.total_pemasukan * st.session_state.rasio_dir)/100
-    st.session_state['target_rasio_tabungan_pemasukan'] = int(st.session_state.total_pemasukan * st.session_state.rasio_tabungan_pemasukan)/100
-    st.session_state['target_dana_darurat'] = int(st.session_state.total_pemasukan*st.session_state.dana_darurat)
+def get_total():    
+    # st.session_state['target_dana_darurat'] = int(st.session_state.total_pemasukan*st.session_state.dana_darurat)
 
     st.session_state['total_pemasukan'] = int(st.session_state.gaji
                                            + st.session_state.hasil_usaha
@@ -57,12 +55,15 @@ def get_total():
     st.session_state['total_pengeluaran'] = int(st.session_state.total_subs
                                             + st.session_state.total_cicilan
                                             + st.session_state.total_living_cost
+                                            + st.session_state.total_saving
                                             )
     
     st.session_state['total_pemasukan_pengeluaran'] = int(st.session_state.total_pengeluaran
                                                        + st.session_state.total_pemasukan
                                                        )
     st.session_state['selisih_pemasukan_pengeluaran'] = (st.session_state.total_pemasukan - st.session_state.total_pengeluaran)
+    st.session_state['target_rasio_utang_pemasukan'] = int((st.session_state.total_pemasukan * st.session_state.rasio_dir)/100)
+    st.session_state['target_rasio_tabungan_pemasukan'] = int(st.session_state.total_pemasukan * st.session_state.rasio_tabungan_pemasukan/100)
     st.session_state['val_pemasukan'] = st.session_state.total_pemasukan<=0
     st.session_state['val_pengeluaran'] = st.session_state.total_pengeluaran<=0
     
@@ -71,7 +72,7 @@ def cek_pemasukan_pengeluaran():
         default_warning()
     else:
         if st.session_state.total_pemasukan>st.session_state.total_pengeluaran:
-            st.success("Good job! Pemasukan kamu masih lebih tinggi daripada pengeluaran. Kamu masih bisa nabung {:,}lagi".format(st.session_state.selisih_pemasukan_pengeluaran))
+            st.success("Good job! Pemasukan kamu masih lebih tinggi daripada pengeluaran. Kamu masih bisa nabung {:,} lagi.".format(st.session_state.selisih_pemasukan_pengeluaran))
         elif st.session_state.total_pemasukan<st.session_state.total_pengeluaran:
             st.error("Waduh! Pengeluaran kamu melebihi pemasukan. Berikut saran yang dapat kamu lakukan")
             st.write("* Kamu membutuhkan pemasukan tambahan untuk mengimbangi pengeluaran yang terlampau besar.")
@@ -84,9 +85,12 @@ def cek_rasio_utang_pemasukan():
     if st.session_state.total_pemasukan<=0:
         default_warning("Masukkan pemasukan dan cicilan kamu terlebih dahulu.") 
     elif st.session_state.total_cicilan>st.session_state.target_rasio_utang_pemasukan:
-        st.error("Waduh! Cicilan kamu lebih besar dari maksimal rasio cicilan yang diijinkan {} atau setara dengan {}".format(st.session_state.rasio_dir
+        st.error("Waduh! Cicilan kamu lebih besar dari maksimal rasio cicilan yang diijinkan {} atau setara dengan {:,}".format(st.session_state.rasio_dir
                                                                                                                               , st.session_state.target_rasio_utang_pemasukan
                                                                                                                               ))
+        st.subheader("Rekomendasi:")
+        st.write("* Cari pemasukan tambahan")
+        st.write("* Kurangi pengeluaran utang dengan memperpanjang tenor atau melunasi utang sekaligus")
     else:
         st.success("Good job! Cicilan kamu {:,} masih dalam target rasio yang direncanakan {}% atau maksimal cicilan sebesar {:,} dari total pemasukan {:,}.".format(
                                                                                                                                     st.session_state.total_cicilan
