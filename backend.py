@@ -61,11 +61,50 @@ def get_total():
     st.session_state['total_pemasukan_pengeluaran'] = int(st.session_state.total_pengeluaran
                                                        + st.session_state.total_pemasukan
                                                        )
+    st.session_state['total_aset_kas_lancar'] = int(st.session_state.aset_lancar__kas_di_tangan
+                                             + st.session_state.aset_lancar__tabungan
+                                             + st.session_state.aset_lancar__deposito
+                                             + st.session_state.aset_lancar__rdpu
+                                             )
+    st.session_state['total_aset_investasi_lancar'] = int(st.session_state.aijp__emas
+                                                          +st.session_state.aijp__rdpt
+                                                          +st.session_state.aijp__rdc
+                                                          +st.session_state.aijp__rds
+                                                          +st.session_state.aijp__obligasi
+                                                          +st.session_state.aijp__saham
+                                                          +st.session_state.aijp__nilai_tunai_asuransi
+                                                          +st.session_state.aijp__lain_lain
+                                                          )
+    st.session_state['total_aset_konsumsi_tidak_lancar'] = int(st.session_state.aktl__rumah
+                                                               +st.session_state.aktl__perhiasan
+                                                               +st.session_state.aktl__mobil
+                                                               +st.session_state.aktl__motor
+                                                               )
+    st.session_state['total_aset_investasi_tidak_lancar'] = int(st.session_state.aitl__bpjsnaker
+                                                                + st.session_state.aitl__bpjsjht
+                                                                + st.session_state.aitl__dplk
+                                                                + st.session_state.aitl__koleksi
+                                                                + st.session_state.aitl__properti
+                                                                + st.session_state.aitl__tanah
+                                                                + st.session_state.aitl__nilai_bersih_usaha
+                                                                )
+
+    st.session_state['total_aset_lancar'] = int(st.session_state.total_aset_kas_lancar
+                                                +st.session_state.total_aset_investasi_lancar
+                                                )
+    st.session_state['total_aset_tidak_lancar'] = int(st.session_state.total_aset_konsumsi_tidak_lancar
+                                                      + st.session_state.total_aset_investasi_tidak_lancar
+                                                      )
+    
     st.session_state['selisih_pemasukan_pengeluaran'] = (st.session_state.total_pemasukan - st.session_state.total_pengeluaran)
     st.session_state['target_rasio_utang_pemasukan'] = int((st.session_state.total_pemasukan * st.session_state.rasio_dir)/100)
     st.session_state['target_rasio_tabungan_pemasukan'] = int(st.session_state.total_pemasukan * st.session_state.rasio_tabungan_pemasukan/100)
+    st.session_state['target_rasio_premi_asuransi'] = int(st.session_state.total_pemasukan * st.session_state.rasio_premi_asuransi/100)
     st.session_state['val_pemasukan'] = st.session_state.total_pemasukan<=0
     st.session_state['val_pengeluaran'] = st.session_state.total_pengeluaran<=0
+    st.session_state['total_aset'] = int(st.session_state.total_aset_lancar
+                                         + st.session_state.total_aset_tidak_lancar
+                                         )
     
 def cek_pemasukan_pengeluaran():
     if st.session_state.total_pemasukan==0 or st.session_state.total_pengeluaran==0:
@@ -99,7 +138,7 @@ def cek_rasio_utang_pemasukan():
                                                                                                                                     , st.session_state.total_pemasukan))
 def cek_rasio_tabungan_pemasukan():
     if st.session_state.total_saving==0 or st.session_state.total_pemasukan==0:
-        default_warning("Masukkan jumlah pemasukan yang diterima dan tabungan yang ditabung setiap bulannya")
+        default_warning("Masukkan jumlah pemasukan yang diterima dan tabungan yang ditabung setiap bulannya.")
     else:    
         if st.session_state.total_saving >= st.session_state.target_rasio_tabungan_pemasukan:
             st.success("Good job. Uang yang kamu tabung setiap bulan {:,} sudah mencapai target rasio tabungan {}% terhadap pemasukan {:,}".format(st.session_state.total_saving

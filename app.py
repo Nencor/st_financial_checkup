@@ -11,7 +11,10 @@ initialize(session_states=['total_pemasukan'
                            ,'val_pemasukan'
                            ,'val_pengeluaran'
                            ,'total_saving'
-                           ,'target_rasio_tabungan_pemasukanras'                           
+                           ,'target_rasio_tabungan_pemasukanras'  
+                           ,'total_aset_kas_lancar'   
+                           ,'total_aset_lancar'       
+                           ,'total_aset_tidak_lancar'               
                            ])
 
 def number_input (labelnya,keynya,helpnya='',default_min_value=0):
@@ -34,20 +37,21 @@ def slider_input(labelnya,keynya,helpnya='',valuenya=50,default_min_value=0,defa
     
 
     
-tab1,tab2,tab3,tab4,tab5 = st.tabs(['Pemasukan','Pengeluaran','Financial Checkup','Debug','Credit'])
+tab1,tab2,tab3,tab4,tab5,tab6,tab7 = st.tabs(['Pemasukan','Pengeluaran','Aset','Utang','Financial Checkup','Debug','Credit'])
 
 
 with st.sidebar:
     st.title("Tikidata Analytics Financial Checkup")
-    slider_input("Target rasio utang terhadap pemasukan (%)",'rasio_dir',valuenya=30)
+    slider_input("Target rasio utang terhadap pemasukan (%)",'rasio_dir',valuenya=30,default_max_value=30,helpnya="30% merupakan rasio maksimal yang direkomendasikan")
     slider_input("Target rasio tabungan terhadap pemasukan (%)",'rasio_tabungan_pemasukan',valuenya=50)
+    slider_input("Target rasio Premi Asuransi terhadap pemasukan (%)",'rasio_premi_asuransi',valuenya=10,default_max_value=20,helpnya="Idealnya Premi Asuransi maksimal ialah 10% dari Pemasukan setiap bulan")
     # slider_input("Target Emergency Fund (bulan)",keynya='dana_darurat',default_min_value=3,default_max_value=12,valuenya=6)
 
 
 
 
 with tab1:
-        st.subheader("Total Pemasukan: {:,}".format(st.session_state.total_pemasukan))
+        st.subheader("Total Pemasukan: {:,} per bulan.".format(st.session_state.total_pemasukan))
         number_input("Gaji",keynya='gaji',helpnya="Gaji yang diterima setiap bulan include THR dan bonus prorata per bulan")
         number_input("Hasil usaha",keynya='hasil_usaha',helpnya="Rata-rata/minimum hasil usaha yang diterima setiap bulan")
         number_input("Sampingan",keynya='sampingan',helpnya='Rata-rata / minimum pemasukan sampingan seperti ngajar les, ngeband, GoCar, komisi asuransi,komisi properti setiap bulannya')
@@ -58,7 +62,7 @@ with tab1:
              st.write("FAQ bakal diupdate disini")
 
 with tab2:
-    st.header("Total Pengeluaran: {:,}".format(st.session_state.total_pengeluaran))
+    st.header("Total Pengeluaran: {:,} per bulan.".format(st.session_state.total_pengeluaran))
     col1,col2 = st.columns(2)
     with col1:
         st.subheader("Living Cost: {:,}".format(st.session_state.total_living_cost))
@@ -100,6 +104,51 @@ with tab2:
         st.write("FAQ bakal diupdate disini")
         
 with tab3:
+    st.subheader("Total Aset: {:,}".format(st.session_state.total_aset))
+    
+    st.write("##### Total Aset Lancar: {:,}".format(st.session_state.total_aset_lancar))
+    
+    with st.expander("Aset Kas Lancar"):
+        st.subheader("Total Aset Kas Lancar: {:,}".format(st.session_state.total_aset_kas_lancar))
+        number_input("Kas di tangan",keynya="aset_lancar__kas_di_tangan")
+        number_input("Tabungan",keynya="aset_lancar__tabungan")
+        number_input("Deposito",keynya="aset_lancar__deposito")
+        number_input("Reksadana Pasar Uang",keynya="aset_lancar__rdpu")
+    
+    with st.expander("Aset Investasi Lancar"):
+        st.subheader("Total Investasi Lancar: {:,}".format(st.session_state.total_aset_investasi_lancar))
+        number_input("Emas / Logam berharga",keynya="aijp__emas")
+        number_input("Reksadana Pendapatan Tetap",keynya="aijp__rdpt")
+        number_input("Reksadana Campuran",keynya="aijp__rdc")
+        number_input("Reksadana Saham",keynya="aijp__rds")        
+        number_input("Obligasi",keynya="aijp__obligasi")        
+        number_input("Saham",keynya="aijp__saham")
+        number_input("Nilai Tunai Polis",keynya="aijp__nilai_tunai_asuransi",helpnya="Berlaku pada Asuransi Dwiguna dan Unit Link")
+        number_input("Lain-lain",keynya="aijp__lain_lain")
+    
+    st.write("##### Total Aset Tidak Lancar: {:,}".format(st.session_state.total_aset_tidak_lancar))
+    with st.expander("Aset Konsumsi Tidak Lancar"):
+        number_input("Rumah dihuni",keynya="aktl__rumah")
+        number_input("Perhiasan",keynya="aktl__perhiasan")
+        number_input("Mobil",keynya="aktl__mobil")
+        number_input("Motor",keynya="aktl__motor")
+
+    with st.expander("Aset Investasi Tidak Lancar"):
+        number_input("BPJS Ketenagakerjaan",keynya="aitl__bpjsnaker")
+        number_input("BPJS Jaminan Hari Tua",keynya="aitl__bpjsjht")
+        number_input("Jaminan Pensiun (DPLK)",keynya="aitl__dplk")
+        number_input("Barang Koleksi / Antique",keynya="aitl__koleksi")
+        number_input("Properti",keynya="aitl__properti")
+        number_input("Tanah",keynya="aitl__tanah")
+        number_input("Nilai Bersih Usaha",keynya='aitl__nilai_bersih_usaha')
+
+
+
+
+with tab4:
+    print("Hello")
+
+with tab5:
     st.write("Di bawah ini beberapa feedback yang dapat dipertimbangkan:")
     with st.expander("Cek Cashflow"):
         cek_pemasukan_pengeluaran()
@@ -109,10 +158,12 @@ with tab3:
 
     with st.expander("Cek rasio tabungan terhadap pemasukan"):
         cek_rasio_tabungan_pemasukan()
-with tab4:
+    
+with tab6:
     st.json(st.session_state)
     # st.write(type(st.session_state))
-with tab5:
+
+with tab7:
     st.write("Kudos to the following friends and colleague for their contributions in this project. ")
     st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
     st.write("Follow our [Linkedin Pages](https://www.linkedin.com/company/tikidata-analytics) for more freebies.")
