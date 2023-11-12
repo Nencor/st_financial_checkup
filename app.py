@@ -14,7 +14,10 @@ initialize(session_states=['total_pemasukan'
                            ,'target_rasio_tabungan_pemasukanras'  
                            ,'total_aset_kas_lancar'   
                            ,'total_aset_lancar'       
-                           ,'total_aset_tidak_lancar'               
+                           ,'total_aset_tidak_lancar'
+                           , 'total_aset' 
+                           ,'total_aset_investasi_lancar'   
+                           ,'session_name'           
                            ])
 
 def number_input (labelnya,keynya,helpnya='',default_min_value=0):
@@ -62,10 +65,9 @@ with tab1:
              st.write("FAQ bakal diupdate disini")
 
 with tab2:
-    st.header("Total Pengeluaran: {:,} per bulan.".format(st.session_state.total_pengeluaran))
-    col1,col2 = st.columns(2)
-    with col1:
-        st.subheader("Living Cost: {:,}".format(st.session_state.total_living_cost))
+    st.subheader("Total Pengeluaran: {:,} per bulan.".format(st.session_state.total_pengeluaran))
+    st.write("##### Total living Cost: {:,} per bulan".format(st.session_state.total_living_cost))
+    with st.expander("Living cost"):
         number_input('Sewa Kos / Apartemen',keynya='kos_apartemen',helpnya='Biaya sewa kos/apartemen per bulan')
         number_input("Biaya Iuran Pemeliharaan Lingkungan (IPL)",keynya='ipl',helpnya='Biaya Iuran Pemeliharaan Lingkungan setiap bulannya')
         number_input("Biaya listrik",keynya='pln',helpnya="Listrik prabayar / paskabayar tiap bulan (AVG)")
@@ -78,8 +80,9 @@ with tab2:
         number_input("Transport Bulanan",keynya='transport')
         number_input("Premi Asuransi",keynya='asuransi',helpnya="Budget pembayaran premi asuransi tiap bulannya. Jika pembayaran tahunan maka diinput prorata per bulan.")
         number_input("Parkiran Kendaraan",keynya='parkiran',helpnya='Jumlah budget Parkiran baik di kantor / rumah / apartemen yang ditanggung pribadi')
-    with col2:
-        st.subheader("Total Saving: {:,}".format(st.session_state.total_saving))
+    
+    st.write("##### Total Saving: {:,}".format(st.session_state.total_saving))
+    with st.expander("Saving"):    
         number_input("Kas di tangan",keynya='rekening_tangan',helpnya='Uang tunai yang dimiliki secara tunai')
         number_input("Rekening tabungan",keynya='rekening_tabungan',helpnya='Total uang di seluruh rekening tabungan')
         number_input("Reksadana Pasar Uang",keynya='rdpu')
@@ -87,13 +90,17 @@ with tab2:
         number_input("Reksadana Saham",keynya='rds')
         number_input("Reksadana Obligasi",keynya='rd_obligasi')
 
-        st.subheader("Total Cicilan: {:,}".format(st.session_state.total_cicilan))
+    st.write("##### Total Cicilan: {:,}".format(st.session_state.total_cicilan))
+    with st.expander("Cicilan"):
+        
         number_input("Cicilan rumah/apartemen/",keynya='cicilan_rumah',helpnya='Total cicilan seluruh rumah/apartemen per bulan')
         number_input("Cicilan motor",keynya='cicilan_motor',helpnya="Total cicilan seluruh motor per bulan")
         number_input("Cicilan mobil",keynya='cicilan_mobil',helpnya='Total cicilan seluruh mobil per bulan')
         number_input("Cicilan Kartu Kredit",keynya='cicilan_cc',helpnya='Total cicilan seluruh Kartu Kredit per bulan')
     
-        st.subheader("Total Subscription: {:,}".format(st.session_state.total_subs))
+    st.write("##### Total Subscription: {:,}".format(st.session_state.total_subs))
+    with st.expander("Subscription"):
+        
         number_input("Streaming Spotify",keynya='subs_spotify')
         number_input("Streaming Netflix",keynya='subs_netflix')
         number_input('Subscription ChatGPT',keynya='subs_chatgpt')
@@ -109,14 +116,14 @@ with tab3:
     st.write("##### Total Aset Lancar: {:,}".format(st.session_state.total_aset_lancar))
     
     with st.expander("Aset Kas Lancar"):
-        st.subheader("Total Aset Kas Lancar: {:,}".format(st.session_state.total_aset_kas_lancar))
+        st.write("##### Total Aset Kas Lancar: {:,}".format(st.session_state.total_aset_kas_lancar))
         number_input("Kas di tangan",keynya="aset_lancar__kas_di_tangan")
         number_input("Tabungan",keynya="aset_lancar__tabungan")
         number_input("Deposito",keynya="aset_lancar__deposito")
         number_input("Reksadana Pasar Uang",keynya="aset_lancar__rdpu")
     
     with st.expander("Aset Investasi Lancar"):
-        st.subheader("Total Investasi Lancar: {:,}".format(st.session_state.total_aset_investasi_lancar))
+        st.write("##### Total Investasi Lancar: {:,}".format(st.session_state.total_aset_investasi_lancar))
         number_input("Emas / Logam berharga",keynya="aijp__emas")
         number_input("Reksadana Pendapatan Tetap",keynya="aijp__rdpt")
         number_input("Reksadana Campuran",keynya="aijp__rdc")
@@ -146,7 +153,23 @@ with tab3:
 
 
 with tab4:
-    print("Hello")
+    st.subheader("Total Utang: {:,}".format(0))
+    st.write("##### Total Utang Jangka Pendek: {:,}".format(0))
+    with st.expander("Utang jangka pendek"):
+        number_input("Kartu Kredit",keynya="ujpe__cc",helpnya="Total Outstanding Utang Kartu Kredit")
+        number_input("Pinjaman Pribadi ",keynya='ujpe__personal_loan',helpnya=("Total Outstanding Pinjaman Pribadi"))
+        number_input("KKB Mobil",keynya='ujpe__mobil',helpnya="Total Outstanding KKB Mobil")
+        number_input("KKB Motor",keynya='ujpe__motor',helpnya="Total Outstanding KKB Motor")
+        number_input("Kredit tanpa agunan",keynya='ujpe__kta',helpnya="Total Outstanding KTA")
+        number_input("Kredit lainnya",keynya='ujpe__lainnya',helpnya="Total Outstanding Kredit lainnya")
+
+    st.write("##### Total Utang Jangka Panjang: {:,}".format(0))
+    with st.expander("Utang jangka panjang"):
+        number_input("Kredit Rumah / KPR",keynya='ujpa__kpr')
+        number_input("Kredit Apartemen / KPA",keynya='ujpa__kpa')
+        number_input("Pinjaman lainnya (jangka panjang)",keynya='ujpa__lainnya')
+
+    
 
 with tab5:
     st.write("Di bawah ini beberapa feedback yang dapat dipertimbangkan:")
