@@ -10,14 +10,19 @@ initialize(session_states=['total_pemasukan'
                            ,'cek_pemasukan_pengeluaran'
                            ,'val_pemasukan'
                            ,'val_pengeluaran'
+                           ,'total_subs_exist'
                            ,'total_saving'
                            ,'target_rasio_tabungan_pemasukanras'  
                            ,'total_aset_kas_lancar'   
                            ,'total_aset_lancar'       
                            ,'total_aset_tidak_lancar'
-                           , 'total_aset' 
+                           ,'total_aset' 
                            ,'total_aset_investasi_lancar'   
-                           ,'session_name'           
+                           ,'total_utang'
+                           ,'total_utang_jangka_pendek'
+                           ,'total_utang_jangka_panjang'
+                           ,'total_utang_outstanding'
+                           ,'target_rasio_utang_outstanding_aset'          
                            ])
 
 def number_input (labelnya,keynya,helpnya='',default_min_value=0):
@@ -45,9 +50,10 @@ tab1,tab2,tab3,tab4,tab5,tab6,tab7 = st.tabs(['Pemasukan','Pengeluaran','Aset','
 
 with st.sidebar:
     st.title("Tikidata Analytics Financial Checkup")
-    slider_input("Target rasio utang terhadap pemasukan (%)",'rasio_dir',valuenya=30,default_max_value=30,helpnya="30% merupakan rasio maksimal yang direkomendasikan")
-    slider_input("Target rasio tabungan terhadap pemasukan (%)",'rasio_tabungan_pemasukan',valuenya=50)
-    slider_input("Target rasio Premi Asuransi terhadap pemasukan (%)",'rasio_premi_asuransi',valuenya=10,default_max_value=20,helpnya="Idealnya Premi Asuransi maksimal ialah 10% dari Pemasukan setiap bulan")
+    slider_input("Target rasio utang terhadap pemasukan (%)",'rasio_dir',valuenya=30,default_max_value=100,helpnya="30% merupakan rasio maksimal yang direkomendasikan")
+    slider_input("Target rasio tabungan terhadap pemasukan (%)",'rasio_tabungan_pemasukan',valuenya=50,default_max_value=100)
+    slider_input("Target rasio Premi Asuransi terhadap pemasukan (%)",'rasio_premi_asuransi',valuenya=10,default_max_value=100,helpnya="Idealnya Premi Asuransi maksimal ialah 10% dari Pemasukan setiap bulan")
+    slider_input("Target rasio utang outstanding terhadap aset (%)",'rasio_utang_aset',default_max_value=100,valuenya=10)
     # slider_input("Target Emergency Fund (bulan)",keynya='dana_darurat',default_min_value=3,default_max_value=12,valuenya=6)
 
 
@@ -83,17 +89,18 @@ with tab2:
     
     st.write("##### Total Saving: {:,}".format(st.session_state.total_saving))
     with st.expander("Saving"):    
-        number_input("Kas di tangan",keynya='rekening_tangan',helpnya='Uang tunai yang dimiliki secara tunai')
-        number_input("Rekening tabungan",keynya='rekening_tabungan',helpnya='Total uang di seluruh rekening tabungan')
-        number_input("Reksadana Pasar Uang",keynya='rdpu')
-        number_input("Reksadana Pendapatan Tetap",keynya='rdpt')
-        number_input("Reksadana Saham",keynya='rds')
-        number_input("Reksadana Obligasi",keynya='rd_obligasi')
+        number_input("Kas di tangan",keynya='rekening_tangan',helpnya='Jika menabung uang tunai secara rutin')
+        number_input("Rekening tabungan",keynya='rekening_tabungan',helpnya='Jika menabung di rekening tabungan secara rutin')
+        number_input("Reksadana Pasar Uang",keynya='rdpu',helpnya='Jika menabung di Reksadana Pasar Uang secara rutin')
+        number_input("Reksadana Pendapatan Tetap",keynya='rdpt',helpnya='Jika menabung di Reksadana Pendapatan Tetap')
+        number_input("Reksadana Saham",keynya='rds',helpnya='Jika menabung di Reksadana Saham secara rutin')
+        number_input("Reksadana Obligasi",keynya='rd_obligasi',helpnya='Jika menabung di Reksadana Obligasi secara rutin')
 
     st.write("##### Total Cicilan: {:,}".format(st.session_state.total_cicilan))
     with st.expander("Cicilan"):
         
-        number_input("Cicilan rumah/apartemen/",keynya='cicilan_rumah',helpnya='Total cicilan seluruh rumah/apartemen per bulan')
+        number_input("Cicilan KPR",keynya='cicilan_kpr',helpnya='Total cicilan seluruh rumah per bulan')
+        number_input("Cicilan KPA",keynya='cicilan_kpa',helpnya='Total cicilan seluruh apartemen per bulan')
         number_input("Cicilan motor",keynya='cicilan_motor',helpnya="Total cicilan seluruh motor per bulan")
         number_input("Cicilan mobil",keynya='cicilan_mobil',helpnya='Total cicilan seluruh mobil per bulan')
         number_input("Cicilan Kartu Kredit",keynya='cicilan_cc',helpnya='Total cicilan seluruh Kartu Kredit per bulan')
@@ -101,11 +108,12 @@ with tab2:
     st.write("##### Total Subscription: {:,}".format(st.session_state.total_subs))
     with st.expander("Subscription"):
         
-        number_input("Streaming Spotify",keynya='subs_spotify')
-        number_input("Streaming Netflix",keynya='subs_netflix')
-        number_input('Subscription ChatGPT',keynya='subs_chatgpt')
-        number_input("Subscription/Streaming lainnya",keynya='subs_others')
-        number_input("Gym/Zumba/Poundfit/Yoga Subscription",keynya='gym')
+        number_input("Streaming Spotify",keynya='subs_spotify',helpnya='Biaya langganan Spotify tiap bulannya')
+        number_input("Streaming Netflix",keynya='subs_netflix', helpnya='Biaya langganan Netflix tiap bulannya')
+        number_input('Subscription ChatGPT',keynya='subs_chatgpt',helpnya='Biaya langganan ChatGPT setiap bulannya')
+        number_input("Subscription/Streaming lainnya",keynya='subs_others',helpnya='Biaya langganan streaming lainnya')
+        number_input("Gym/Zumba/Poundfit/Yoga Subscription",keynya='gym',helpnya='Biaya langganan gym tiap bulannya')
+        number_input("Gym/Zumba/Poundfit/Yoga/Personal Trainer/Coaching/Mentoring Subscription",keynya='mentoring',helpnya='Biaya langganan tiap bulannya')
 
     with st.expander("FAQ"):
         st.write("FAQ bakal diupdate disini")
@@ -153,8 +161,8 @@ with tab3:
 
 
 with tab4:
-    st.subheader("Total Utang: {:,}".format(0))
-    st.write("##### Total Utang Jangka Pendek: {:,}".format(0))
+    st.subheader("Total Utang: {:,}".format(st.session_state.total_utang_outstanding))
+    st.write("##### Total Utang Jangka Pendek: {:,}".format(st.session_state.total_utang_jangka_pendek))
     with st.expander("Utang jangka pendek"):
         number_input("Kartu Kredit",keynya="ujpe__cc",helpnya="Total Outstanding Utang Kartu Kredit")
         number_input("Pinjaman Pribadi ",keynya='ujpe__personal_loan',helpnya=("Total Outstanding Pinjaman Pribadi"))
@@ -163,7 +171,7 @@ with tab4:
         number_input("Kredit tanpa agunan",keynya='ujpe__kta',helpnya="Total Outstanding KTA")
         number_input("Kredit lainnya",keynya='ujpe__lainnya',helpnya="Total Outstanding Kredit lainnya")
 
-    st.write("##### Total Utang Jangka Panjang: {:,}".format(0))
+    st.write("##### Total Utang Jangka Panjang: {:,}".format(st.session_state.total_utang_jangka_panjang))
     with st.expander("Utang jangka panjang"):
         number_input("Kredit Rumah / KPR",keynya='ujpa__kpr')
         number_input("Kredit Apartemen / KPA",keynya='ujpa__kpa')
@@ -176,11 +184,14 @@ with tab5:
     with st.expander("Cek Cashflow"):
         cek_pemasukan_pengeluaran()
 
-    with st.expander("Cek rasio utang terhadap pemasukan"):
+    with st.expander("Cek rasio utang terhadap Pemasukan"):
         cek_rasio_utang_pemasukan()
 
-    with st.expander("Cek rasio tabungan terhadap pemasukan"):
+    with st.expander("Cek rasio tabungan terhadap Pemasukan"):
         cek_rasio_tabungan_pemasukan()
+    
+    with st.expander("Cek rasio Utang Oustanding terhadap Aset"):
+        cek_rasio_utang_outstanding_aset()
     
 with tab6:
     st.json(st.session_state)
@@ -188,7 +199,7 @@ with tab6:
 
 with tab7:
     st.write("Kudos to the following friends and colleague for their contributions in this project. ")
+    st.write("* [Asuransimurni.com](https://asuransimurni.com) - Agen Asuransi AXA Financial Indonesia")
+    st.write("* [Pitchstar Chernenko](https://www.linkedin.com/in/nencor) and [Tikidata Analytics](https://www.linkedin.com/company/tikidata-analytics)  - Data Analytics Agency")
     st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
-    st.write("Follow our [Linkedin Pages](https://www.linkedin.com/company/tikidata-analytics) for more freebies.")
-    st.write("This project is in collaboration with [Asuransimurni.com](https://asuransimurni.com)")
     st.write("Any comments and feedbacks are welcome in [Twitter](https://twitter.com/asmurcom).")
