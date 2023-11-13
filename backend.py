@@ -117,12 +117,14 @@ def get_total():
     st.session_state['selisih_pemasukan_pengeluaran'] = (st.session_state.total_pemasukan - st.session_state.total_pengeluaran)
     st.session_state['target_rasio_utang_pemasukan'] = int((st.session_state.total_pemasukan * st.session_state.rasio_dir)/100)
     st.session_state['target_rasio_tabungan_pemasukan'] = int(st.session_state.total_pemasukan * st.session_state.rasio_tabungan_pemasukan/100)
-    st.session_state['target_rasio_premi_asuransi'] = int(st.session_state.total_pemasukan * st.session_state.rasio_premi_asuransi/100)
     st.session_state['target_rasio_utang_outstanding_aset'] = int(st.session_state.total_aset*st.session_state.rasio_utang_aset/100)
+    st.session_state['rasio_premi_asuransi_pemasukan'] = int((st.session_state.asuransi/st.session_state.total_pemasukan)*100)
+    st.session_state['target_premi_asuransi'] = int(st.session_state.total_pemasukan * 0.1)
     st.session_state['val_pemasukan'] = st.session_state.total_pemasukan<=0
     st.session_state['val_pengeluaran'] = st.session_state.total_pengeluaran<=0
     st.session_state['total_subs_exist'] = st.session_state.total_subs>0
-    st.session_state['val_utang'] = st.session_state
+    st.session_state['val_utang'] = st.session_state.total_utang
+    st.session_state['total_net_worth'] = st.session_state.total_aset - st.session_state.total_utang_outstanding
 
     
 def cek_pemasukan_pengeluaran():
@@ -130,7 +132,9 @@ def cek_pemasukan_pengeluaran():
         default_warning()
     else:
         if st.session_state.total_pemasukan>st.session_state.total_pengeluaran:
-            st.success("Good job! Pemasukan kamu masih lebih tinggi daripada pengeluaran. Kamu masih bisa nabung {:,} lagi.".format(st.session_state.selisih_pemasukan_pengeluaran))
+            st.success("Good job! Pemasukan kamu {:,} masih lebih tinggi daripada pengeluaran {:,}. Kamu masih bisa nabung {:,} lagi.".format(st.session_state.total_pemasukan
+                                                                                                                                                ,st.session_state.total_pengeluaran
+                                                                                                                                                ,st.session_state.selisih_pemasukan_pengeluaran))
         elif st.session_state.total_pemasukan<st.session_state.total_pengeluaran:
             st.error("Waduh! Pengeluaran kamu {:,} melebihi pemasukan {:,}. Berikut saran yang dapat kamu lakukan".format(st.session_state.total_pengeluaran,st.session_state.total_pemasukan))
             st.write("* Kamu membutuhkan pemasukan tambahan untuk mengimbangi pengeluaran yang terlampau besar.")
@@ -158,7 +162,7 @@ def cek_rasio_utang_pemasukan():
                                                                                                                                     , st.session_state.total_pemasukan))
 def cek_rasio_tabungan_pemasukan():
     if st.session_state.total_saving==0 or st.session_state.total_pemasukan==0:
-        default_warning("Masukkan jumlah pemasukan yang diterima dan tabungan (saving) yang ditabung setiap bulannya pada tab Pengeluaran.")
+        default_warning("Masukkan Jumlah Pemasukan yang diterima dan Jumlah Tabungan (Saving) yang ditabung setiap bulannya pada tab Pengeluaran.")
     else:    
         if st.session_state.total_saving >= st.session_state.target_rasio_tabungan_pemasukan:
             st.success("Good job. Uang yang kamu tabung setiap bulan {:,} sudah mencapai target rasio tabungan {}% terhadap pemasukan {:,}".format(st.session_state.total_saving
@@ -182,4 +186,30 @@ def cek_rasio_utang_outstanding_aset():
                                                                                                                     ,st.session_state.target_rasio_utang_outstanding_aset
                                                                                                                     ))
     else:
-        default_warning("Masukkan jumlah Utang Outstanding pada tab Utang dan jumlah aset pada tab Aset")
+        default_warning("Masukkan jumlah Utang Outstanding pada tab Utang dan Jumlah Aset pada tab Aset")
+
+def cek_rasio_asuransi_pemasukan():
+    if st.session_state.asuransi & st.session_state.total_pemasukan:
+        if st.session_state.rasio_premi_asuransi_pemasukan<=0.1:
+            st.success("Good job! Total Premi Asuransi kamu adalah {:,} dan nominal tersebut hanya {} dari total pemasukan kamu {:,}. Premi Asuransi yang ideal ialah 10% dari total Pemasukan. Kalau Preminya kebanyakan khawatir nanti bakal susah nabungnya.".format(st.session_state.asuransi
+                                                                                                               ,st.session_state.rasio_premi_asuransi_pemasukan
+                                                                                                               ,st.session_state.total_pemasukan
+                                                                                                               ))
+        else:
+            st.error("Waduh! Total Premi Asuransi kamu adalah {:,} dan nominal tersebut {}% dari total pemasukan kamu {:,}. Premi Asuransi yang ideal ialah 10% dari total Pemasukan ({:,}). Kalau Preminya kebanyakan khawatir nanti bakal susah nabungnya.".format(st.session_state.asuransi
+                                                                                                    ,st.session_state.rasio_premi_asuransi_pemasukan
+                                                                                                    ,st.session_state.total_pemasukan
+                                                                                                    , st.session_state.target_premi_asuransi))
+    else:
+        default_warning("Masukkan Jumlah Premi Asuransi pada tab Pengeluaran dan Jumlah Pemasukan pada tab Pemasukan")
+
+def cek_net_worth():
+    if st.session_state.total_aset & st.session_state.total_utang_outstanding:
+        if st.session_state.total_net_worth>0:
+            st.success("Total Net Worth kamu adalah {}. Total Aset kamu adalah {:,} sementara Total Utang Outstanding adalah {:,}. Way to go to Financial Indepentend, Retire Early!")
+        else:
+            st.error("Waduh. Total Net Worth kamu adalah {:,}. Total Utang Outstanding {:,} lebih besar dari Total Aset".format(st.session_state.total_net_worth
+                                                                                                  , st.session_state.total_utang_outstanding
+                                                                                                  ,st.session_state.total_aset))
+    else:
+        default_warning("Masukkan Jumlah Aset pada tab Aset dan Jumlah Utang pada tab Utang")

@@ -22,7 +22,8 @@ initialize(session_states=['total_pemasukan'
                            ,'total_utang_jangka_pendek'
                            ,'total_utang_jangka_panjang'
                            ,'total_utang_outstanding'
-                           ,'target_rasio_utang_outstanding_aset'          
+                           ,'target_rasio_utang_outstanding_aset'   
+                           ,'target_premi_asuransi'       
                            ])
 
 def number_input (labelnya,keynya,helpnya='',default_min_value=0):
@@ -45,21 +46,42 @@ def slider_input(labelnya,keynya,helpnya='',valuenya=50,default_min_value=0,defa
     
 
     
-tab1,tab2,tab3,tab4,tab5,tab6,tab7 = st.tabs(['Pemasukan','Pengeluaran','Aset','Utang','Financial Checkup','Debug','Credit'])
+tab1,tab2,tab3,tab4,tab5,tab6,tab7 = st.tabs(['Home','Pemasukan','Pengeluaran','Aset','Utang','Financial Checkup','Debug'])
 
 
 with st.sidebar:
-    st.title("Tikidata Analytics Financial Checkup")
-    slider_input("Target rasio utang terhadap pemasukan (%)",'rasio_dir',valuenya=30,default_max_value=100,helpnya="30% merupakan rasio maksimal yang direkomendasikan")
-    slider_input("Target rasio tabungan terhadap pemasukan (%)",'rasio_tabungan_pemasukan',valuenya=50,default_max_value=100)
-    slider_input("Target rasio Premi Asuransi terhadap pemasukan (%)",'rasio_premi_asuransi',valuenya=10,default_max_value=100,helpnya="Idealnya Premi Asuransi maksimal ialah 10% dari Pemasukan setiap bulan")
-    slider_input("Target rasio utang outstanding terhadap aset (%)",'rasio_utang_aset',default_max_value=100,valuenya=10)
+    st.title("[Asmurcom](https://twitter.com/asmurcom) Financial Checkup")
+    st.subheader("Konfigurasi")
+    slider_input("Target Rasio Utang terhadap Pemasukan (%)",'rasio_dir',valuenya=30,default_max_value=100,helpnya="30% merupakan rasio maksimal yang direkomendasikan")
+    slider_input("Target Rasio Tabungan terhadap Pemasukan (%)",'rasio_tabungan_pemasukan',valuenya=50,default_max_value=100)
+    slider_input("Target Rasio Utang Outstanding terhadap Aset (%)",'rasio_utang_aset',default_max_value=100,valuenya=10)
     # slider_input("Target Emergency Fund (bulan)",keynya='dana_darurat',default_min_value=3,default_max_value=12,valuenya=6)
 
 
 
-
 with tab1:
+    st.subheader("Hi")
+    st.write("Welcome to Asmurcom Financial Checkup. The purpose of this app is helping users finding insight/pattern regarding their Income/Expenditure/Asset/Expenses.")
+    st.write("Kudos to the following friends and colleague for their contributions in this project. ")
+    st.write("* [Asuransimurni.com](https://asuransimurni.com) - Agen Asuransi AXA Financial Indonesia")
+    st.write("* [Pitchstar Chernenko](https://www.linkedin.com/in/nencor) and [Tikidata Analytics](https://www.linkedin.com/company/tikidata-analytics)  - Data Analytics Agency")
+    st.subheader("How to use")
+    st.write("* * Fill current income in 'Pemasukan' tab.")
+    st.write("* * Fill current Expenditure / Expenses in 'Aset' tab.")
+    st.write("* * Fill current Asset in 'Aset' tab.")
+    st.write("* * Fill current Liabilities, Morgage in 'Utang' tab.")
+    st.write("* * Check the result in 'Financial Checkup' tab.")
+    st.subheader("Disclaimer:")
+    st.write("Disclaimer: Tikidata dan Developers don't store your data. The tools provides no Financial Recommendation. Always reach out your personal Financial PLanner to seek any advice / guidance in Financial.")
+    st.subheader("Support:")
+    st.write("Any comments and feedbacks are welcome in [Twitter](https://twitter.com/asmurcom). Should you need more metrics / data, let's talk!")
+    st.subheader("FAQ")
+    with st.expander("What distinguish 'Total Cicilan' in 'Pengeluaran' tab with 'Total Utang' in 'Utang' tab."):
+        st.write("* * 'Total Cicilan' in 'Pengeluaran' is something that we pay every month while 'Total Utang' in 'Utang' is how much the Unpaid/Outstanding Liabilities/Morgages.")
+    with st.expander("I want Apps and Automation that work similar to this"):
+        st.write("* * Feel free to reach out Chernenko through his Linkedin and contact him directly.")
+
+with tab2:
         st.subheader("Total Pemasukan: {:,} per bulan.".format(st.session_state.total_pemasukan))
         number_input("Gaji",keynya='gaji',helpnya="Gaji yang diterima setiap bulan include THR dan bonus prorata per bulan")
         number_input("Hasil usaha",keynya='hasil_usaha',helpnya="Rata-rata/minimum hasil usaha yang diterima setiap bulan")
@@ -70,7 +92,7 @@ with tab1:
         with st.expander("FAQ"):
              st.write("FAQ bakal diupdate disini")
 
-with tab2:
+with tab3:
     st.subheader("Total Pengeluaran: {:,} per bulan.".format(st.session_state.total_pengeluaran))
     st.write("##### Total living Cost: {:,} per bulan".format(st.session_state.total_living_cost))
     with st.expander("Living cost"):
@@ -118,7 +140,7 @@ with tab2:
     with st.expander("FAQ"):
         st.write("FAQ bakal diupdate disini")
         
-with tab3:
+with tab4:
     st.subheader("Total Aset: {:,}".format(st.session_state.total_aset))
     
     st.write("##### Total Aset Lancar: {:,}".format(st.session_state.total_aset_lancar))
@@ -143,24 +165,21 @@ with tab3:
     
     st.write("##### Total Aset Tidak Lancar: {:,}".format(st.session_state.total_aset_tidak_lancar))
     with st.expander("Aset Konsumsi Tidak Lancar"):
-        number_input("Rumah dihuni",keynya="aktl__rumah")
-        number_input("Perhiasan",keynya="aktl__perhiasan")
-        number_input("Mobil",keynya="aktl__mobil")
-        number_input("Motor",keynya="aktl__motor")
+        number_input("Rumah dihuni",keynya="aktl__rumah",helpnya="Taksiran harga rumah bila dijual hari ini")
+        number_input("Perhiasan",keynya="aktl__perhiasan",helpnya="Taksiran harga perhiasan bila dijual hari ini")
+        number_input("Mobil",keynya="aktl__mobil",helpnya="Taksiran harga mobil bila dijual hari ini")
+        number_input("Motor",keynya="aktl__motor",helpnya="Taksiran harga motor bila dijual hari ini")
 
     with st.expander("Aset Investasi Tidak Lancar"):
         number_input("BPJS Ketenagakerjaan",keynya="aitl__bpjsnaker")
         number_input("BPJS Jaminan Hari Tua",keynya="aitl__bpjsjht")
         number_input("Jaminan Pensiun (DPLK)",keynya="aitl__dplk")
-        number_input("Barang Koleksi / Antique",keynya="aitl__koleksi")
-        number_input("Properti",keynya="aitl__properti")
-        number_input("Tanah",keynya="aitl__tanah")
-        number_input("Nilai Bersih Usaha",keynya='aitl__nilai_bersih_usaha')
+        number_input("Barang Koleksi / Antique",keynya="aitl__koleksi",helpnya="Taksiran harga Koleksi / Antique bila dijual hari ini")
+        number_input("Properti",keynya="aitl__properti",helpnya="Taksiran harga rumah bila dijual hari ini")
+        number_input("Tanah",keynya="aitl__tanah",helpnya="Taksiran harga tanah bila dijual hari ini")
+        number_input("Nilai Bersih Usaha",keynya='aitl__nilai_bersih_usaha',helpnya="Taksiran nilai bisnis")
 
-
-
-
-with tab4:
+with tab5:
     st.subheader("Total Utang: {:,}".format(st.session_state.total_utang_outstanding))
     st.write("##### Total Utang Jangka Pendek: {:,}".format(st.session_state.total_utang_jangka_pendek))
     with st.expander("Utang jangka pendek"):
@@ -177,29 +196,26 @@ with tab4:
         number_input("Kredit Apartemen / KPA",keynya='ujpa__kpa')
         number_input("Pinjaman lainnya (jangka panjang)",keynya='ujpa__lainnya')
 
-    
-
-with tab5:
-    st.write("Di bawah ini beberapa feedback yang dapat dipertimbangkan:")
-    with st.expander("Cek Cashflow"):
-        cek_pemasukan_pengeluaran()
-
-    with st.expander("Cek rasio utang terhadap Pemasukan"):
-        cek_rasio_utang_pemasukan()
-
-    with st.expander("Cek rasio tabungan terhadap Pemasukan"):
-        cek_rasio_tabungan_pemasukan()
-    
-    with st.expander("Cek rasio Utang Oustanding terhadap Aset"):
-        cek_rasio_utang_outstanding_aset()
-    
 with tab6:
+    st.write("Di bawah ini beberapa feedback yang dapat dipertimbangkan:")
+    col1,col2 = st.columns(2)
+    with col1:
+        with st.expander("Cek Cashflow"):
+            cek_pemasukan_pengeluaran()        
+        with st.expander("Cek rasio Utang Oustanding terhadap Aset"):
+            cek_rasio_utang_outstanding_aset()
+        with st.expander("Cek Net Worth"):
+            cek_net_worth()
+
+    with col2:
+        with st.expander("Cek rasio utang terhadap Pemasukan"):
+            cek_rasio_utang_pemasukan()
+        with st.expander("Cek rasio Premi Asuransi terhadap Pemasukan"):
+            cek_rasio_asuransi_pemasukan()
+        with st.expander("Cek rasio tabungan terhadap Pemasukan"):
+            cek_rasio_tabungan_pemasukan()
+             
+with tab7:
     st.json(st.session_state)
     # st.write(type(st.session_state))
 
-with tab7:
-    st.write("Kudos to the following friends and colleague for their contributions in this project. ")
-    st.write("* [Asuransimurni.com](https://asuransimurni.com) - Agen Asuransi AXA Financial Indonesia")
-    st.write("* [Pitchstar Chernenko](https://www.linkedin.com/in/nencor) and [Tikidata Analytics](https://www.linkedin.com/company/tikidata-analytics)  - Data Analytics Agency")
-    st.write("Disclaimer: Tikidata dan Tim tidak mengambil data apapun yang dimasukkan dalam aplikasi ini. Tools ini bukan merupakan rekomendasi keuangan.")
-    st.write("Any comments and feedbacks are welcome in [Twitter](https://twitter.com/asmurcom).")
