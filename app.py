@@ -79,7 +79,12 @@ with tab1:
     with st.expander("What distinguish 'Total Cicilan' in 'Pengeluaran' tab with 'Total Utang' in 'Utang' tab."):
         st.write("* * 'Total Cicilan' in 'Pengeluaran' is something that we pay every month while 'Total Utang' in 'Utang' is how much the Unpaid/Outstanding Liabilities/Morgages.")
     with st.expander("I want Apps and Automation that work similar to this"):
-        st.write("* * Feel free to reach out Chernenko through his Linkedin and contact him directly.")
+        st.write("* * Feel free to reach out Chernenko through his [Twitter](https://twitter.com/asmurcom) and contact him directly.")
+    st.subheader("Future Improvement")
+    st.write("* Add Visualizations and Charts to help users in digesting data and information")
+    st.write("* Translation texts")
+    st.write("* Improving layout, UI / UX")
+    st.write("* Add more Financial Metrics and Ratios")
 
 with tab2:
         st.subheader("Total Pemasukan: {:,} per bulan.".format(st.session_state.total_pemasukan))
@@ -218,4 +223,3 @@ with tab6:
 with tab7:
     st.json(st.session_state)
     # st.write(type(st.session_state))
-
