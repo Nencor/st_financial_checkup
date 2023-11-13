@@ -118,7 +118,7 @@ def get_total():
     st.session_state['target_rasio_utang_pemasukan'] = int((st.session_state.total_pemasukan * st.session_state.rasio_dir)/100)
     st.session_state['target_rasio_tabungan_pemasukan'] = int(st.session_state.total_pemasukan * st.session_state.rasio_tabungan_pemasukan/100)
     st.session_state['target_rasio_utang_outstanding_aset'] = int(st.session_state.total_aset*st.session_state.rasio_utang_aset/100)
-    st.session_state['rasio_premi_asuransi_pemasukan'] = int((st.session_state.asuransi/st.session_state.total_pemasukan)*100)
+    st.session_state['rasio_premi_asuransi_pemasukan'] = st.session_state.asuransi/st.session_state.total_pemasukan*100
     st.session_state['target_premi_asuransi'] = int(st.session_state.total_pemasukan * 0.1)
     st.session_state['val_pemasukan'] = st.session_state.total_pemasukan<=0
     st.session_state['val_pengeluaran'] = st.session_state.total_pengeluaran<=0
@@ -190,16 +190,16 @@ def cek_rasio_utang_outstanding_aset():
 
 def cek_rasio_asuransi_pemasukan():
     if st.session_state.asuransi & st.session_state.total_pemasukan:
-        if st.session_state.rasio_premi_asuransi_pemasukan<=0.1:
-            st.success("Good job! Total Premi Asuransi kamu adalah {:,} dan nominal tersebut hanya {} dari total pemasukan kamu {:,}. Premi Asuransi yang ideal ialah 10% dari total Pemasukan. Kalau Preminya kebanyakan khawatir nanti bakal susah nabungnya.".format(st.session_state.asuransi
+        if st.session_state.rasio_premi_asuransi_pemasukan<=10:
+            st.success("Good job! Total Premi Asuransi kamu adalah {:,} dan nominal tersebut hanya {:.2f}% dari total pemasukan kamu {:,}. Premi Asuransi yang ideal ialah 10% dari total Pemasukan. Kalau Preminya kebanyakan khawatir nanti bakal susah nabungnya.".format(st.session_state.asuransi
                                                                                                                ,st.session_state.rasio_premi_asuransi_pemasukan
                                                                                                                ,st.session_state.total_pemasukan
                                                                                                                ))
         else:
-            st.error("Waduh! Total Premi Asuransi kamu adalah {:,} dan nominal tersebut {}% dari total pemasukan kamu {:,}. Premi Asuransi yang ideal ialah 10% dari total Pemasukan ({:,}). Kalau Preminya kebanyakan khawatir nanti bakal susah nabungnya.".format(st.session_state.asuransi
+            st.error("Waduh! Total Premi Asuransi kamu adalah {:,} dan nominal tersebut {:.2f}% dari total pemasukan kamu {:,}. Premi Asuransi yang ideal ialah 10% dari total Pemasukan ({:,}). Kalau Preminya kebanyakan khawatir nanti bakal susah nabungnya.".format(st.session_state.asuransi
                                                                                                     ,st.session_state.rasio_premi_asuransi_pemasukan
                                                                                                     ,st.session_state.total_pemasukan
-                                                                                                    , st.session_state.target_premi_asuransi))
+                                                                                                    ,st.session_state.target_premi_asuransi))
     else:
         default_warning("Masukkan Jumlah Premi Asuransi pada tab Pengeluaran dan Jumlah Pemasukan pada tab Pemasukan")
 

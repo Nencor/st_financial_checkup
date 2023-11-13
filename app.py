@@ -65,6 +65,7 @@ with tab1:
     st.write("Kudos to the following friends and colleague for their contributions in this project. ")
     st.write("* [Asuransimurni.com](https://asuransimurni.com) - Agen Asuransi AXA Financial Indonesia")
     st.write("* [Pitchstar Chernenko](https://www.linkedin.com/in/nencor) and [Tikidata Analytics](https://www.linkedin.com/company/tikidata-analytics)  - Data Analytics Agency")
+    st.write("* [Guntur](https://twitter.com/47px) - Dark Magick Software Engineer")
     st.subheader("How to use")
     st.write("* * Fill current income in 'Pemasukan' tab.")
     st.write("* * Fill current Expenditure / Expenses in 'Aset' tab.")
@@ -72,7 +73,7 @@ with tab1:
     st.write("* * Fill current Liabilities, Morgage in 'Utang' tab.")
     st.write("* * Check the result in 'Financial Checkup' tab.")
     st.subheader("Disclaimer:")
-    st.write("Disclaimer: Tikidata dan Developers don't store your data. The tools provides no Financial Recommendation. Always reach out your personal Financial PLanner to seek any advice / guidance in Financial.")
+    st.write("Disclaimer: Tikidata dan Developers don't store your data. The tools provides no Financial Recommendation. Always reach out your personal Financial Planner to seek any advice / guidance in Financial.")
     st.subheader("Support:")
     st.write("Any comments and feedbacks are welcome in [Twitter](https://twitter.com/asmurcom). Should you need more metrics / data, let's talk!")
     st.subheader("FAQ")
@@ -140,7 +141,7 @@ with tab3:
         number_input('Subscription ChatGPT',keynya='subs_chatgpt',helpnya='Biaya langganan ChatGPT setiap bulannya')
         number_input("Subscription/Streaming lainnya",keynya='subs_others',helpnya='Biaya langganan streaming lainnya')
         number_input("Gym/Zumba/Poundfit/Yoga Subscription",keynya='gym',helpnya='Biaya langganan gym tiap bulannya')
-        number_input("Gym/Zumba/Poundfit/Yoga/Personal Trainer/Coaching/Mentoring Subscription",keynya='mentoring',helpnya='Biaya langganan tiap bulannya')
+        number_input("Mentoring/Coaching",keynya='mentoring',helpnya='Biaya langganan mentoring/coaching tiap bulannya')
 
     with st.expander("FAQ"):
         st.write("FAQ bakal diupdate disini")
