@@ -155,7 +155,7 @@ def cek_rasio_utang_pemasukan():
         st.write("* Cari pemasukan tambahan")
         st.write("* Kurangi pengeluaran utang dengan memperpanjang tenor atau melunasi utang sekaligus")
     else:
-        st.success("Good job! Cicilan kamu {:,} masih dalam target rasio yang direncanakan {}% atau maksimal cicilan sebesar {:,} dari total pemasukan {:,}.".format(
+        st.success("Good job! Cicilan kamu adalah {:,} dan masih dalam target rasio yang direncanakan {}% atau maksimal cicilan sebesar {:,} dari total pemasukan {:,}.".format(
                                                                                                                                     st.session_state.total_cicilan
                                                                                                                                     , st.session_state.rasio_dir
                                                                                                                                     , st.session_state.target_rasio_utang_pemasukan
